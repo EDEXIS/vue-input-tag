@@ -1,3 +1,37 @@
+<template>
+
+  <div
+    v-on:click="focusNewTag()"
+    :class="[
+      'vue-input-tag-wrapper ',
+      readOnly ? 'read-only' : ''
+    ]"
+  >
+    <span 
+      v-for="(tag, index) in attachedTags" 
+      :key="index"
+      class="input-tag"
+    >
+      <span>{{ tag }}</span>
+      <a 
+        v-if="!readOnly" 
+        v-on:click.prevent.stop="remove(index)" 
+        class="remove"
+      ></a>
+    </span>
+    <input 
+      v-if="!readOnly" 
+      v-model="newTag" 
+      v-on:keydown.delete.stop="removeLastTag()" 
+      v-on:keydown.enter.prevent.stop="addNew(newTag)" 
+      :placeholder="query" 
+      type="text" 
+      class="new-tag"
+      style="width: auto;"
+    />
+  </div>
+</template>
+
 <script>
 /*eslint-disable*/
   const validators = {
@@ -12,16 +46,17 @@
     name: 'InputTag',
 
     props: {
-      tags: {
+      attachedTags: {
+        type: Array,
+        default: () => [],
+      },
+      allTags: {
         type: Array,
         default: () => [],
       },
       placeholder: {
         type: String,
         default: '',
-      },
-      onChange: {
-        type: Function,
       },
       readOnly: {
         type: Boolean,
@@ -43,9 +78,8 @@
         this.$el.querySelector('.new-tag').focus();
       },
       addNew(tag) {
-        if (tag && !this.tags.includes(tag) && this.validateIfNeeded(tag)) {
-          this.tags.push(tag);
-          this.tagChange();
+        if (tag && !this.attachedTags.includes(tag) && this.validateIfNeeded(tag)) {
+          this.$emit('addTag', tag); 
         }
         this.newTag = '';
       },
@@ -58,46 +92,53 @@
         return true;
       },
       remove(index) {
-        this.tags.splice(index, 1);
-        this.tagChange();
+        this.$emit('removeTag', this.attachedTags[index])
       },
       removeLastTag() {
         if (this.newTag) { return; }
-        this.tags.pop();
-        this.tagChange();
+        this.$emit('removeTag', this.attachedTags.pop())
       },
       tagChange() {
         if (this.onChange) {
           // avoid passing the observer
-          this.onChange(JSON.parse(JSON.stringify(this.tags)));
+          this.onChange(JSON.parse(JSON.stringify(this.attachedTags)));
         }
-      },
+      }
     },
+    computed: {
+      query () {
+        if (this.newTag === '') {
+          return this.placeholder
+        }
+        return this.newTag 
+      },
+      tagSearch () {
+        if (this.newTag === '') {
+          return []
+        }
+
+        let regex = new RegExp('^.*' + this.newTag + '.*$', 'i')
+        let list = []
+        for (let i = 0; i < this.allTags.length; i++) {
+          if (!regex.test(this.allTags[i].title)) {
+            continue
+          }
+          list.push(this.allTags[i].title)
+        }
+        return list
+      }
+    } 
   };
 </script>
-
-<template>
-
-  <div @click="focusNewTag()" v-bind:class="{'read-only': readOnly}" class="vue-input-tag-wrapper">
-    <span v-for="(tag, index) in tags" class="input-tag">
-      <span>{{ tag }}</span>
-      <a v-if="!readOnly" @click.prevent.stop="remove(index)" class="remove"></a>
-    </span>
-    <input v-if="!readOnly" v-bind:placeholder="placeholder" type="text" v-model="newTag" v-on:keydown.delete.stop="removeLastTag()" v-on:keydown.enter.prevent.stop="addNew(newTag)" class="new-tag"/>
-  </div>
-
-</template>
-
-<style>
+<style scoped>
 
   .vue-input-tag-wrapper {
     background-color: #fff;
-    border: 1px solid #ccc;
     overflow: hidden;
     padding-left: 4px;
     padding-top: 4px;
     cursor: text;
-    text-align: left;
+    text-align: right;
     -webkit-appearance: textfield;
   }
 

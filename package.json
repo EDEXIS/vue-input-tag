@@ -11,7 +11,7 @@
   "main": "src/InputTag.vue",
   "repository": {
     "type": "git",
-    "url": "https://github.com/matiastucci/vue-input-tag"
+    "url": "https://github.com/jasonbrennan/vue-input-tag"
   },
   "homepage": "https://matiastucci.github.io/vue-input-tag",
   "license": "MIT",

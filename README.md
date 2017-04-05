@@ -1,14 +1,8 @@
 # vue-input-tag
-> A Vue.js 2.0 input tag component inspired in [react-tagsinput](https://github.com/olahol/react-tagsinput)
+## Forked From
+[matiastucci/vue-input-tag](https://github.com/matiastucci/vue-input-tag)
 
-[![Codeship](https://img.shields.io/codeship/3a192ae0-9502-0134-8f6e-1e693cf3975e/master.svg)]()
-[![Coverage Status](https://coveralls.io/repos/github/matiastucci/vue-input-tag/badge.svg?branch=master)](https://coveralls.io/github/matiastucci/vue-input-tag?branch=master)
-[![bitHound Overall Score](https://www.bithound.io/github/matiastucci/vue-input-tag/badges/score.svg)](https://www.bithound.io/github/matiastucci/vue-input-tag)
-[![bitHound Dependencies](https://www.bithound.io/github/matiastucci/vue-input-tag/badges/dependencies.svg)](https://www.bithound.io/github/matiastucci/vue-input-tag/master/dependencies/npm)
-[![bitHound Code](https://www.bithound.io/github/matiastucci/vue-input-tag/badges/code.svg)](https://www.bithound.io/github/matiastucci/vue-input-tag)
-[![Version](https://img.shields.io/npm/v/vue-input-tag.svg)](https://www.npmjs.com/package/vue-input-tag)
-[![License](https://img.shields.io/npm/l/vue-input-tag.svg)](https://www.npmjs.com/package/vue-input-tag)
-[![Monthly Downloads](https://img.shields.io/npm/dm/vue-input-tag.svg)](https://www.npmjs.com/package/vue-input-tag)
+> A Vue.js 2.0 input tag component inspired in [react-tagsinput](https://github.com/olahol/react-tagsinput) 
 
 <p align="center">
   <img src="demo.gif" width="750" alt="Logo"/>
@@ -29,15 +23,31 @@ import InputTag from 'vue-input-tag'
 ## Usage
 
 ``` html
-<input-tag :on-change="callbackMethod" :tags="tagsArray"></input-tag>
+  <input-tag
+    :attachedTags="tagsFiltered"
+    :allTags="tags"
+    placeholder="Add Tags"
+    v-on:newTag="create($event)"
+    v-on:addTag="attach($event)"
+    v-on:removeTag="detach($event)"
+    class="col-md-12"
+    style="display:inline-block; white-space: nowrap;"
+  > </input-tag>
 ```
 
 ## Props
 | Name | Type | Default | Description |
 | ---:| --- | ---| --- |
-| tags | Array | [] | Tags to be render in the input |
+| attachedTags | Array | [] | Tags to be render in the input |
+| allTags | Array | [] | Tags to be compared with user input for search |
 | placeholder | String | "" | Placeholder to be shown when no tags |
 | read-only | Boolean | false | Set input to readonly |
-| on-change | Function | undefined | Callback to get the tags when there is a change |
 | validate | String | "" | Apply certain validator for user input. Choose from `email`, `url`, `text`, `digits` or `isodate`
+
+## Emits
+| Name | Return | Description |
+| ---:| --- | --- |
+| addTag | String | A user added tag that needs to be added to "attachedTags" |
+| removeTag | String | A tag that the user wants to remove from "attachedTags" |
+| createTag | String | User created tag that isn't in the "allTags" Array|
 
